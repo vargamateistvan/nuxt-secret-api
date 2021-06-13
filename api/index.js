@@ -1,6 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 // Require API routes
 const users = require('./routes/users')
@@ -8,7 +8,7 @@ const test = require('./routes/test')
 const secret = require('./routes/secret')
 
 // Require mongoose models
-const Secret = require('./models/secret');
+// const Secret = require('./models/secret')
 
 // Create express instance
 const app = express()
@@ -33,32 +33,37 @@ if (require.main === module) {
 }
 
 // Init MongoDB
-mongoose.connect('mongodb://root:rootpassword@mongo:27017/secret-db?authSource=admin', { useNewUrlParser: true });
-mongoose.Promise = global.Promise;
-const db = mongoose.connection;
+mongoose.connect('mongodb://mongo:27017/secret-db?authSource=admin', {
+  useNewUrlParser: true,
+  useFindAndModify: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+})
+mongoose.Promise = global.Promise
+const db = mongoose.connection
 
 // MongoDB status
-db.on("connecting", function () {
-  console.log("connecting to MongoDB...");
-});
+db.on('connecting', function () {
+  console.log('connecting to MongoDB...')
+})
 
-db.on("error", function (error) {
-  console.error("error in MongoDB connection: " + error);
-  mongoose.disconnect();
-});
+db.on('error', function (error) {
+  console.error('error in MongoDB connection: ' + error)
+  mongoose.disconnect()
+})
 
-db.on("connected", function () {
-  console.log("connected to MongoDB.");
-});
+db.on('connected', function () {
+  console.log('connected to MongoDB.')
+})
 
-db.once("open", function () {
-  console.log("MongoDB connection is open.");
-});
+db.once('open', function () {
+  console.log('MongoDB connection is open.')
+})
 
-db.on("reconnected", function () {
-  console.log("MongoDB reconnected.");
-});
+db.on('reconnected', function () {
+  console.log('MongoDB reconnected.')
+})
 
-db.on("disconnected", function () {
-  console.log("MongoDB disconnected.");
-});
+db.on('disconnected', function () {
+  console.log('MongoDB disconnected.')
+})

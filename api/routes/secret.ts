@@ -21,8 +21,8 @@ router.post('/secret', async (req, res) => {
     const newSecret = new SecretModel({
         hash: Buffer.from(secret, 'binary').toString('base64'),
         secretText: secret,
-        createdAt: new Date().getTime(),
-        expiresAt: new Date(new Date().getTime() + expireAfter * 60000 ),
+        createdAt: new Date(),
+        expiresAt: new Date(new Date().getTime() + expireAfter * 60000),
         remainingViews: expireAfterViews
     })
     await newSecret.save(err => {
@@ -35,15 +35,14 @@ router.post('/secret', async (req, res) => {
     });
 });
 
-router.get('/secret/:hash', (req, res) => {
+router.get('/secret/:hash', async(req, res) => {
     console.log('REQUEST', req.params.hash);
-    res.json({
-        hash: "[The hash of the string]",
-        secretText: "[The original text]",
-        createdAt: "[The Timestamp the secret was created]",
-        expiresAt: "[The Timestamp the secret if TTL is given]",
-        remainingViews: 0
+    const secret = await SecretModel.findOne({hash: req.params.hash}, (err) => {
+        if (err) {
+            console.error(err);
+        }
     });
+    res.json(secret);
 });
 
 module.exports = router

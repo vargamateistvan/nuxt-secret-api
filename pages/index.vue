@@ -5,30 +5,27 @@
         Secrets
       </h1>
       Secret:
-      <input v-model="secret" type="text" name="secret">
+      <input v-model="secret" type="text">
       Expire after view
-      <input v-model="expireAfterViews" type="number" name="secret">
+      <input v-model="expireAfterViews" type="number">
       Expire after
-      <input v-model="expireAfter" type="number" name="secret">
+      <input v-model="expireAfter" type="number">
       <button @click="createSecret">
         Create Secret
       </button>
-      <!-- <div>
-        {{ test }}
-        <div class="links">
-          <a
-            href="/users"
-            class="button--green"
-          >
-            Users List
-          </a>
-        </div>
-      </div> -->
       <ul class="users">
-        <li v-for="(secret, index) in secrets" :key="index" class="secret">
-          <!-- <nuxt-link :to="{ name: 'users-id', params: { id: index }}"> -->
-          {{ secret.hash }}
-          <!-- </nuxt-link> -->
+        <li v-for="(currentSecret, index) in secrets" :key="index" class="secret">
+          {{
+            "hash: " +
+              currentSecret.hash +
+              " epiresAt: " +
+              currentSecret.expiresAt +
+              " remainingViews: " +
+              currentSecret.remainingViews
+          }}
+          <button @click="getSecret(currentSecret.hash)">
+            Check Secret
+          </button>
         </li>
       </ul>
     </div>
@@ -53,7 +50,11 @@ export default {
   },
   methods: {
     async createSecret () {
-      const request = { secret: this.secret, expireAfterViews: this.expireAfterViews, expireAfter: this.expireAfter }
+      const request = {
+        secret: this.secret,
+        expireAfterViews: this.expireAfterViews,
+        expireAfter: this.expireAfter
+      }
       console.log('REQUEST', request)
       const result = await fetch('/api/secret', {
         method: 'POST',
@@ -71,7 +72,22 @@ export default {
       console.log('RESPONSE', response)
       this.secrets.push(response)
     },
-    getSecret () { }
+    async getSecret (hash) {
+      console.log('REQUEST', hash)
+      const result = await fetch(`/api/secret/${hash}`, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer'
+      })
+      const response = await result.json()
+      console.log('RESPONSE', response)
+    }
   }
 }
 </script>

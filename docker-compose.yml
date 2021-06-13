@@ -17,19 +17,13 @@ services:
 
     
     mongo:
-        image: mongo:latest
-        container_name: mongodb
-        restart: always
-        environment:
-            MONGO_INITDB_DATABASE: secret-db
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: rootpassword
+        image: mongo
         ports:
             - 27017:27017
         volumes:
-            - mongodb_data:/data/secret-db
+            - mongodb:/data/db
 
 volumes:
-    mongodb_data:
+    mongodb:
     node_modules:
     
