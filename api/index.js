@@ -1,15 +1,24 @@
-const express = require('express')
-
-// Create express instance
-const app = express()
+import express from 'express'
+import bodyParser from 'body-parser'
+import mongoose from 'mongoose';
 
 // Require API routes
 const users = require('./routes/users')
 const test = require('./routes/test')
+const secret = require('./routes/secret')
+
+// Require mongoose models
+const Secret = require('./models/secret');
+
+// Create express instance
+const app = express()
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // Import API Routes
 app.use(users)
 app.use(test)
+app.use(secret)
 
 // Export express app
 module.exports = app
@@ -22,3 +31,34 @@ if (require.main === module) {
     console.log(`API server listening on port ${port}`)
   })
 }
+
+// Init MongoDB
+mongoose.connect('mongodb://root:rootpassword@mongo:27017/secret-db?authSource=admin', { useNewUrlParser: true });
+mongoose.Promise = global.Promise;
+const db = mongoose.connection;
+
+// MongoDB status
+db.on("connecting", function () {
+  console.log("connecting to MongoDB...");
+});
+
+db.on("error", function (error) {
+  console.error("error in MongoDB connection: " + error);
+  mongoose.disconnect();
+});
+
+db.on("connected", function () {
+  console.log("connected to MongoDB.");
+});
+
+db.once("open", function () {
+  console.log("MongoDB connection is open.");
+});
+
+db.on("reconnected", function () {
+  console.log("MongoDB reconnected.");
+});
+
+db.on("disconnected", function () {
+  console.log("MongoDB disconnected.");
+});
