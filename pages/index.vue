@@ -48,6 +48,9 @@ export default {
       secrets: []
     }
   },
+  created() {
+    this.getAllSecret()
+  },
   methods: {
     async createSecret () {
       const request = {
@@ -55,16 +58,16 @@ export default {
         expireAfterViews: this.expireAfterViews,
         expireAfter: this.expireAfter
       }
-      const response = await post('/api/secret', request)
+      await post('/api/secret', request)
       this.getAllSecret()
-      this.secrets.push(response)
     },
     async getSecret (hash) {
-      await post(`/api/secret/${hash}`)
+      await get(`/api/secret/${hash}`)
+      this.getAllSecret()
+
     },
     async getAllSecret () {
-      const response = await get('/api/secrets')
-      console.log(response)
+      this.secrets = await get('/api/secrets')
     }
   }
 }

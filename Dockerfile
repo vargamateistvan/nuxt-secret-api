@@ -1,12 +1,13 @@
 FROM node:12-alpine
 
-ENV APP_ROOT /src
-
-RUN mkdir ${APP_ROOT}
-WORKDIR ${APP_ROOT}
-ADD . ${APP_ROOT}
+RUN npm install -g nodemon
 
 RUN npm install
-RUN npm run build
 
-ENV HOST 0.0.0.0
+COPY package*.json ./
+
+COPY . .
+
+CMD [ "npm", "run", "dev" ]
+
+

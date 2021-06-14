@@ -1,21 +1,20 @@
 version: "3.8"
 services:
-    nuxt:
+    app:
+        image: node:12-alpine
+        container_name: secret-app
         build: .
-        restart: always
-        ports:
-          - "3333:3333"
-        command:
-          "npm run dev"
-    
-    nginx:
-        image: nginx
-        ports:
-          - "80:80"
+        command: npm run dev
         volumes:
-          - ./nginx:/etc/nginx/conf.d
+            - .:/usr/src/app
+            - /app/node_modules/
+        ports:
+            - "3000:3000"
+        environment:
+            HOST: 0.0.0.0
         depends_on:
-          - nuxt
+            - mongo
+
     
     mongo:
         image: mongo
