@@ -14,7 +14,11 @@
         Create Secret
       </button>
       <ul class="users">
-        <li v-for="(currentSecret, index) in secrets" :key="index" class="secret">
+        <li
+          v-for="(currentSecret, index) in secrets"
+          :key="index"
+          class="secret"
+        >
           {{
             "hash: " +
               currentSecret.hash +
@@ -33,13 +37,9 @@
 </template>
 
 <script>
+import { get, post } from '../utils/request'
+
 export default {
-  async asyncData ({ $http }) {
-    const test = await $http.$get('/api/test')
-    return {
-      test
-    }
-  },
   data: () => {
     return {
       secret: '',
@@ -55,38 +55,16 @@ export default {
         expireAfterViews: this.expireAfterViews,
         expireAfter: this.expireAfter
       }
-      console.log('REQUEST', request)
-      const result = await fetch('/api/secret', {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(request)
-      })
-      const response = await result.json()
-      console.log('RESPONSE', response)
+      const response = await post('/api/secret', request)
+      this.getAllSecret()
       this.secrets.push(response)
     },
     async getSecret (hash) {
-      console.log('REQUEST', hash)
-      const result = await fetch(`/api/secret/${hash}`, {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer'
-      })
-      const response = await result.json()
-      console.log('RESPONSE', response)
+      await post(`/api/secret/${hash}`)
+    },
+    async getAllSecret () {
+      const response = await get('/api/secrets')
+      console.log(response)
     }
   }
 }
@@ -95,7 +73,7 @@ export default {
 <style scoped>
 .container {
   margin: 0 auto;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: flex;
   justify-content: center;
   align-items: center;

@@ -35,14 +35,23 @@ router.post('/secret', async (req, res) => {
     });
 });
 
-router.get('/secret/:hash', async(req, res) => {
+router.get('/secret/:hash', async (req, res) => {
     console.log('REQUEST', req.params.hash);
-    const secret = await SecretModel.findOne({hash: req.params.hash}, (err) => {
+    const secret = await SecretModel.findOne({ hash: req.params.hash }, (err) => {
         if (err) {
             console.error(err);
         }
     });
     res.json(secret);
+});
+
+router.get('/secrets', async (req, res) => {
+    const secrets = await SecretModel.find({}, err => {
+        if (err) {
+            console.error(err);
+        }
+    })
+    res.json(secrets);
 });
 
 module.exports = router
