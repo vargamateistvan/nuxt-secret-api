@@ -3,12 +3,7 @@ import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 
 // Require API routes
-const users = require('./routes/users')
-const test = require('./routes/test')
 const secret = require('./routes/secret')
-
-// Require mongoose models
-// const Secret = require('./models/secret')
 
 // Create express instance
 const app = express()
@@ -16,8 +11,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // Import API Routes
-app.use(users)
-app.use(test)
 app.use(secret)
 
 // Export express app
