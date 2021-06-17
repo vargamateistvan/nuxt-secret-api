@@ -18,6 +18,9 @@ type SecretResponse = {
 
 router.post('/secret', async (req, res, next) => {
     const { secretText, expireAfterViews, expireAfter } = req.body;
+    if (!secretText || !expireAfterViews || !expireAfter) {
+        return res.status(400).json({ message: 'Missing required fields' })
+    }
     const secret = new SecretModel({
         hash: Buffer.from(secretText + Math.random() * expireAfterViews, 'binary').toString('base64'),
         secretText: secretText,
@@ -49,13 +52,13 @@ router.get('/secrets', async (req, res, next) => {
             $gte: new Date()
         },
         remainingViews: {
-            $gte: 0
+            $gt: 0
         }
     });
     const secretsExpiredWithView = await SecretModel.find({
         expiresAt: 0,
         remainingViews: {
-            $gte: 0
+            $gt: 0
         }
     });
     return res.json([...secretsExpiredWithTime, ...secretsExpiredWithView]);

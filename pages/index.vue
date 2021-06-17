@@ -68,8 +68,8 @@ export default {
   data: () => {
     return {
       secretText: '',
-      expireAfterViews: 1,
-      expireAfter: 0,
+      expireAfterViews: '1',
+      expireAfter: '0',
       secrets: [],
       valid: false
     }
