@@ -11,11 +11,11 @@ const Secret = new Schema({
         required: true
     },
     createdAt: {
-        type: String,
+        type: Number,
         required: true
     },
     expiresAt: { 
-        type: String, 
+        type: Number, 
         required: true
     },
     remainingViews: { 

@@ -35,7 +35,7 @@ if (require.main === module) {
 // Init MongoDB
 mongoose.connect('mongodb://mongo:27017/secret-db?authSource=admin', {
   useNewUrlParser: true,
-  useFindAndModify: true,
+  useFindAndModify: false,
   useUnifiedTopology: true,
   useCreateIndex: true
 })

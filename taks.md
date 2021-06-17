@@ -59,3 +59,8 @@ It is totaly OK to ask if something is not clear.
 ```
 docker-compose up
 ```
+
+# Rebuild & running
+```
+docker-compose up --build --force-recreate --renew-anon-volumes
+```

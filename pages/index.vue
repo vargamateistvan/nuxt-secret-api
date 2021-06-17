@@ -5,33 +5,26 @@
         Secrets
       </h1>
       Secret:
-      <input v-model="secret" type="text">
+      <input v-model="secretText" type="text">
       Expire after view
-      <input v-model="expireAfterViews" type="number">
+      <input v-model="expireAfterViews" type="number" min="1">
       Expire after
-      <input v-model="expireAfter" type="number">
+      <input v-model="expireAfter" type="number" min="0">
       <button @click="createSecret">
         Create Secret
       </button>
-      <ul class="users">
-        <li
+        <div
           v-for="(currentSecret, index) in secrets"
           :key="index"
           class="secret"
         >
-          {{
-            "hash: " +
-              currentSecret.hash +
-              " epiresAt: " +
-              currentSecret.expiresAt +
-              " remainingViews: " +
-              currentSecret.remainingViews
-          }}
+        <span>Hash: {{currentSecret.hash}}</span>
+        <span>Expire at: {{currentSecret.expiresAt > 0 ? new Date(currentSecret.expiresAt) : 'No time limit'}}</span>
+        <span>Remaing view: {{currentSecret.remainingViews}}</span>
           <button @click="getSecret(currentSecret.hash)">
             Check Secret
           </button>
-        </li>
-      </ul>
+        </div>
     </div>
   </div>
 </template>
@@ -42,7 +35,7 @@ import { get, post } from '../utils/request'
 export default {
   data: () => {
     return {
-      secret: '',
+      secretText: '',
       expireAfterViews: 1,
       expireAfter: 0,
       secrets: []
@@ -54,20 +47,20 @@ export default {
   methods: {
     async createSecret () {
       const request = {
-        secret: this.secret,
+        secretText: this.secretText,
         expireAfterViews: this.expireAfterViews,
         expireAfter: this.expireAfter
       }
-      await post('/api/secret', request)
+      await post('http://localhost:3000/api/secret', request)
       this.getAllSecret()
     },
     async getSecret (hash) {
-      await get(`/api/secret/${hash}`)
+      await get(`http://localhost:3000/api/secret/${hash}`)
       this.getAllSecret()
 
     },
     async getAllSecret () {
-      this.secrets = await get('/api/secrets')
+      this.secrets = await get('http://localhost:3000/api/secrets')
     }
   }
 }
@@ -76,10 +69,9 @@ export default {
 <style scoped>
 .container {
   margin: 0 auto;
-  /* min-height: 100vh; */
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
   text-align: center;
 }
 
