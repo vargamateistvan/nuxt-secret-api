@@ -13,6 +13,9 @@
       <button @click="createSecret">
         Create Secret
       </button>
+      <button @click="getAllSecret">
+        Refresh list
+      </button>
         <div
           v-for="(currentSecret, index) in secrets"
           :key="index"
