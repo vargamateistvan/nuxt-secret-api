@@ -19,7 +19,12 @@ type SecretResponse = {
 router.post('/secret', async (req, res, next) => {
     const { secretText, expireAfterViews, expireAfter } = req.body;
     if (!secretText || !expireAfterViews || !expireAfter) {
-        return res.status(400).json({ message: 'Missing required fields' })
+        return res.status(400).json({
+            data: null,
+            success: false,
+            status: 400,
+            error: 'Missing required parameters'
+        })
     }
     const secret = new SecretModel({
         hash: Buffer.from(secretText + Math.random() * expireAfterViews, 'binary').toString('base64'),
@@ -29,7 +34,12 @@ router.post('/secret', async (req, res, next) => {
         remainingViews: expireAfterViews
     });
     const savedSecret = await secret.save();
-    return res.json(savedSecret);
+    return res.status(200).json({
+        data: savedSecret,
+        success: true,
+        status: 200,
+        error: null
+    });
 });
 
 router.get('/secret/:hash', async (req, res, next) => {
@@ -41,9 +51,19 @@ router.get('/secret/:hash', async (req, res, next) => {
         }
     });
     if ((secret.expiresAt > 0 && secret.expiresAt < new Date()) || secret.remainingViews === 0) {
-        return res.status(403).json({ message: 'Secret is expired' })
+        return res.status(403).json({
+            data: null,
+            success: false,
+            status: 403,
+            error: 'Secret is expired' 
+        })
     }
-    return res.json(secret);
+    return res.status(200).json({ 
+        data: secret,
+        success: true,
+        status: 200,
+        error: null
+    });
 });
 
 router.get('/secrets', async (req, res, next) => {
@@ -61,7 +81,12 @@ router.get('/secrets', async (req, res, next) => {
             $gt: 0
         }
     });
-    return res.json([...secretsExpiredWithTime, ...secretsExpiredWithView]);
+    return res.status(200).json({ 
+        data: [...secretsExpiredWithTime, ...secretsExpiredWithView],
+        success: true,
+        status: 200,
+        error: null
+    });
 });
 
 module.exports = router

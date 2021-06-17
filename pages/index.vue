@@ -58,6 +58,15 @@
         </template>
       </v-simple-table>
     </v-container>
+
+    <v-snackbar v-model="notification.visible" :color="notification.color">
+      {{ notification.text }}
+      <template #action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="notification.visible = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -71,7 +80,12 @@ export default {
       expireAfterViews: '1',
       expireAfter: '0',
       secrets: [],
-      valid: false
+      valid: false,
+      notification: {
+        visible: false,
+        text: '',
+        color: ''
+      }
     }
   },
   created () {
@@ -85,15 +99,27 @@ export default {
         expireAfter: this.expireAfter
       }
 
-      await post('http://localhost:3000/api/secret', request)
+      const response = await post('http://localhost:3000/api/secret', request)
+      if (response.error) { return this.showNotification(response.error, 'error') }
+      this.showNotification('Success request', 'success')
       this.getAllSecret()
     },
     async getSecret (hash) {
-      await get(`http://localhost:3000/api/secret/${hash}`)
+      const response = await get(`http://localhost:3000/api/secret/${hash}`)
+      if (response.error) { return this.showNotification(response.error, 'error') }
+      this.showNotification('Success request', 'success')
       this.getAllSecret()
     },
     async getAllSecret () {
-      this.secrets = await get('http://localhost:3000/api/secrets')
+      const response = await get('http://localhost:3000/api/secrets')
+      if (response.error) { return this.showNotification(response.error, 'error') }
+      this.showNotification('Success request', 'success')
+      this.secrets = response.data
+    },
+    showNotification (message, color) {
+      this.notification.visible = true
+      this.notification.text = message
+      this.notification.color = color
     }
   }
 }
